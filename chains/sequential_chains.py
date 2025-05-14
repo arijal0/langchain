@@ -25,7 +25,7 @@ translate_content = ChatPromptTemplate.from_messages(
     ]
 )
 
-transaltor_wrapper = RunnableLambda(lambda output:{"text":output,"language":"Nepali"})
+transaltor_wrapper = RunnableLambda(lambda output:{"text":output,"language":"French"})
 
 chain = dad_joke_template | model | StrOutputParser() | transaltor_wrapper | translate_content | model |  StrOutputParser()
 res = chain.invoke({"count":2, "topic":"Dad's daughter being delusional about her being financially independent"})
