@@ -58,7 +58,7 @@ def parallel_template():
     main_char_wrapper = RunnableLambda(lambda x: main_character(x))  # we cconverted the output from the third
     #chain to an object
 
-    plot_chain = plot_wrapper | llm | output
+    plot_chain = plot_wrapper | llm | output   #--> plot_wrapper is now an object same for main_char_wrapper
     main_char_chain = main_char_wrapper | llm | output
     # we can put wrappers togethet with the chains e.x
     #plot_chain = RunnableLambda(lambda x: book_plot(x)) | llm | output       -> like this
@@ -71,7 +71,7 @@ def parallel_template():
         book_summary
         | llm
         | output
-        | RunnableParallel(branches = {"plot":plot_chain,"characters":main_char_chain})
+        | RunnableParallel(branches = {"plot":plot_chain,"characters":main_char_chain})   # --> it returns the dict let's say x
         | RunnableLambda( lambda x: verdict_combiner(x["branches"]["plot"], x["branches"]["characters"]))
     )
 
@@ -81,3 +81,24 @@ def parallel_template():
     return res
 
 print(parallel_template())
+
+#Three step process to run chains parallely
+
+# 1: Get the content from the base chain in this case it will be book_summary | llm | output
+    # once we have content we will use it as base for our parallel chains to do things in  parallel way
+    # Here again is three steps:
+            #step 1: use runnableparallel to create branches that goes parallel but to simply we retrieve just the content
+                    #using these chain independently
+            
+            #step 2: define a functionality of each chain in a function e.x main_character() and book_plot()
+            # wrapp the functions inorder to make them object using runable lambda
+
+            #step 3: can be merged with step 2 but for clarity after making it object chain with llm and store output
+
+#2: After using runnableparallel we get a dictionary with branches and then each chains now we need then in human
+    # readable form so we then define a function that would basically help us to better present output
+
+#3: finally since the output of the parallel is in dict so we need to unpack inorder to pass content to the function
+    # that we build inorder to present output and we do everything with in runnablelambda using lambda in the main chain
+
+    
